@@ -1,0 +1,169 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+#load packages
+library(pacman)
+p_load(boot, car, dplyr, ggplot2, Metrics, cowplot, tree, 
+       caret, randomForest, gbm, ElemStatLearn, magrittr, tidyverse, dplyr, haven, Hmisc, psych, janitor, corrplot, reshape, vcd, sfsmisc, DHARMa, e1071, MASS, fmsb)
+```
+
+
+```{r}
+#load datasets
+camdel <- read_spss("Cambridge_delinquency_with_caseid.sav")
+conviction <- read_spss("conviction_data.sav")
+str(conviction)
+```
+
+Question 1:
+Merge the two data files,select the variables and cases you need for the later analysis. Rename variables so that they are identifiable and usable
+```{r}
+#create and rename new data file with data in a wide format to make the merge file easier as there will common columns amongst the data set
+conviction_wide <- spread(conviction, key=agecat, value=convicted)#moving from long to wide data format
+colnames(conviction_wide)[1:8] <- c("v4", "v5", "v11", "v6", "v7", "v8", "v10", "v9")#renaming variables in conviction file to variable number according to code book
+#adding data labels to conviction data
+var.labels <- c(v4="ICPSR SEQ ID NUMBER", v5="CONVICTED 10-13", v11="CONVICTED 10-24", v6="CONVICTED 14-16", v7="CONVICTED 17-20", v8="CONVICTED 21-24", 
+v10="CONVICTED AS ADULT 17-24",v9="CONVICTED AS JUVENILE 10-16")
+attr(conviction_wide, "variable.labels") <- var.labels
+
+#joining data sets by v4 and assigning this to a new data frame
+full_camdel <- camdel %>% left_join(conviction_wide)
+```
+Selecting important variables to analyse:
+According to Kazemian(2011), measures in infancy is not associated with neglect and delinquency while Krohn (2006) looks at predictors of offending where infancy measures are not as important as antisocial child behavior, impulsivity, low intelligence or attainment, family criminality, poverty and poor parental child-rearing behavior. This analysis will aim to model Krohn's predictors on the data set.
+#variables of interest are:
+4 ICPSR SEQUENTIAL IDENTIFICATION NUMBER
+9 CONVICTED AS JUVENILE 10-16
+10 CONVICTED AS ADULT 17-24
+28 NUMBER OF JUVENILE CONVICTIONS
+29 NUMBER OF ADULT CONVICTIONS
+39 ADVENTUROUSNESS OF BOY
+42 ACTING OUT
+53 CONDUCT DISORDER OF BOY
+AGES 8 THROUGH 9
+62 DISCIPLINE QUALITY OF FATHER
+63 DISCIPLINE QUALITY OF MOTHER
+108 OBEDIENCE OF BOY
+117 OUTGOING OR WITHDRAWN BOY
+119 PROGRESSIVE MATRICES IQ
+132 RULES OF PARENTS
+138 SOCIOECONOMIC STATUS OF FAMILY
+AGES 24 THROUGH 25
+847 CURRENT EMPLOYMENT STATUS
+858 LIVING CIRCUMSTANCES
+```{r}
+#These variables will look at the relationship between factors at age 8-9 vs life at 24-25.
+camdel_selected <- dplyr::select(full_camdel, c("v4" ,"v9" ,"v10" ,"v28" ,"v29" ,"v39","v42" ,"v53" ,"v62" ,"v63" ,"v108","v117" ,"v119" ,"v132" ,"v138" ,"v847" ,"v858"))
+
+var.labels <- c(v4="ICPSR SEQ ID NUMBER", v9="CONVICTED AS JUVENILE 10-16", v10="CONVICTED AS ADULT 17-24")
+attr(camdel_selected, "variable.labels") <- var.labels #adding variable labels to see what each variable actually is
+
+#renaming variables for easier understanding when doing analyses
+camdel_selected %<>% 
+rename(c("v4"="SEQ_ID_NUMBER", "v9"="CONVICTED_AS_JUVENILE", "v10"="CONVICTED_AS_ADULT", "v28"="NO_JUVENILE_CONVICTIONS", "v29"="NO_ADULT_CONVICTIONS", "v39"="ADVENTUROUSNESS", "v42"="ACTING_OUT", "v53"="CONDUCT_DISORDER", "v62"="DISCIPLINE_FATHER", "v63"="DISCIPLINE_MOTHER", "v108"="OBEDIENCE", "v117"="OUTGOINGorWITHDRAWN", "v119"="IQ", "v132"="PARENT_RULES", "v138"="ses", "v847"="CURRENT_EMPLOYMENT", "v858"="CIRCUMSTANCES"))
+```
+Question 2: Explore the data set, bearing in mind that our key question concerns what the early life determinants of criminality are.  What is worth exploring further?
+```{r}
+glimpse(camdel_selected)
+```
+From a quick look at the data file, it seems like there are a few missing values that might be problematic later on. Narrowing the variables down has also made dealing with the variables more easily.
+```{r}
+#pairs.panels to look at basic correlations between childhood (8-9 years) and background variables.
+camdel_selected %>% 
+  dplyr::select(2, 3, 8, 13, 14, 15) %>%
+  pairs.panels()
+
+camdel_selected %>% 
+  dplyr::select(4, 5, 9, 10, 11, 12, 16, 17) %>%
+  pairs.panels()#breaking up variables as graph becomes unreadable with too many variables inputted
+```
+From the graphs above it seems like there is a moderate positive relationship between being convicted as a juvenile and then later on as an adult. It seems like the chosen background variables have a weak correlation with adult convictions. However, this be will be further explored in question 3.
+```{r}
+#looking at distribution of individual characteristics at ages 8-9
+cor(camdel_selected, use="complete.obs", method="kendall")
+```
+From the correlations above, it can be seen that there is a moderate positive relationship between being convicted as a juvenile and then later on being convicted as an adult. Conduct disorder also seems to be correlated with boys acting out and their adventurousness. Therefore, for simplicity in question 3, conduct disorder will be used as a proxy for adventurousness and acting out.
+
+Question 3: Model the occurrence and extent of criminality in our participants on the basis of early life events or factors. Interpret your model(s).  Write a function to assess the predictive accuracy of your model(s), test it, and apply it to your data.
+
+Build two models for comparison (basic glm(logistic regression) and then an improved model only using significant predictors)
+```{r}
+#LDA model predicting whether boys were convicted as an adult based on a combination of their individual behaviours and family influences
+camdel_model1 <- dplyr::select(camdel_selected, -c(16, 17 ))#removing adult variables that are not of interest
+
+#splitting data into test and training set
+set.seed(2)
+camdel_traindata <- sample_frac(camdel_model1, 0.75)
+camdel_testdata  <- dplyr::setdiff(camdel_model1, camdel_traindata)
+#looling at descriptives of data
+
+describe(camdel_traindata, na.rm=TRUE) 
+#Build the model1 on the training data set using convicted as an adult as the outcome
+modeltrain <- glm(CONVICTED_AS_ADULT ~ CONVICTED_AS_JUVENILE + 
+                       NO_JUVENILE_CONVICTIONS + NO_ADULT_CONVICTIONS +
+                       CONDUCT_DISORDER + DISCIPLINE_FATHER + 
+                       DISCIPLINE_MOTHER +  OBEDIENCE + OUTGOINGorWITHDRAWN + 
+                       IQ + ses, data = camdel_traindata)
+summary(modeltrain)
+```
+M and SD of data seems relatively similar with no large variances.
+```{r}
+#creating model2 using number of adult convictions as the outcome being predicted
+modeltrain2 <- glm(NO_ADULT_CONVICTIONS ~ CONVICTED_AS_ADULT +   
+                    CONVICTED_AS_JUVENILE + 
+                       NO_JUVENILE_CONVICTIONS + NO_ADULT_CONVICTIONS +
+                       CONDUCT_DISORDER + DISCIPLINE_FATHER + 
+                       DISCIPLINE_MOTHER +  OBEDIENCE + OUTGOINGorWITHDRAWN + 
+                       IQ + ses, data = camdel_traindata)
+summary(modeltrain2)
+```
+The first model has a much lower AIC which means that adult convictions is better predicted by individual and family characteristics than number of convictions as an adult. This is similar to Krohn's(2006) findings which state that the most important independent childhood predictors of offending could be grouped under the headings of antisocial child behavior, impulsivity, low intelligence or attainment, family criminality, poverty and poor parental child-rearing behavior. However, this model indicates that IQ, SES, conviction as a juvenile and number of convictions as a juvenile are significant predictors of adult conviction.
+```{r}
+#test for significance of model 1
+1-pchisq(modeltrain$deviance,
+         modeltrain$df.residual)
+```
+The training regression model is not significant which means that the model seems to fit the data
+```{r}
+#comparing the training to the test model using anova
+testmodel <- glm(CONVICTED_AS_ADULT ~ CONVICTED_AS_JUVENILE + 
+                       NO_JUVENILE_CONVICTIONS + NO_ADULT_CONVICTIONS +
+                       CONDUCT_DISORDER + DISCIPLINE_FATHER + 
+                       DISCIPLINE_MOTHER +  OBEDIENCE + OUTGOINGorWITHDRAWN + 
+                       IQ + ses, data = camdel_testdata)
+summary(testmodel)
+testmodel1 <- predict(testmodel, camdel_traindata, type = "response")
+anova(modeltrain, testmodel1)
+```
+It seems that the AIC score for the test model is actually better than that of the training model. While the anova comparison indicates that predicting the data on the test model has more residual deviance. Therefore, the train model might not actually predict the data well. However, running the residual deviance with a few more iterations of this migt provide a more stable result.
+```{r}
+#Diagnostics for logistic model
+plot(modeltrain)
+```
+
+```{r}
+plot(residuals(modeltrain))
+```
+Residuals seem to be relatively small. However, there do seem to be some high leverage values that are pulling the model up. This may account for the poor predictability earlier on the test data set. 
+```{r}
+#looking at r squared value for model 1
+NagelkerkeR2(modeltrain)
+```
+The r squared value for model 1 indicates that 82% of the response variable variation is explained by a linear model which is good considering the fact that a few variables did not show any correlations to adult conviction.
+```{r}
+#creating a function to calculate MSE for modeltrain
+mse = function (avec){
+  (sum(avec$residuals^2))/(length(avec))}
+mse(modeltrain)
+```
+```{r}
+#running mse function for test model to look at different
+mse(testmodel)
+```
+The MSE for the test model seems to have less error, which means that this might actually be able to predict the data well which is supported by the R squared value of 0.82 and a lower AIC score. Overall, the model will need a possible transformation for linearity as well as for heterogeneity. Comparing this transformed model to a more robust form of a regression might also be more helpful is determining the prediction power of the model. 

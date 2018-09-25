@@ -1,0 +1,744 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Notebook},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{R Notebook}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#load packages}
+\KeywordTok{library}\NormalTok{(pacman)}
+\KeywordTok{p_load}\NormalTok{(boot, car, dplyr, ggplot2, Metrics, cowplot, tree, }
+\NormalTok{       caret, randomForest, gbm, ElemStatLearn, magrittr, tidyverse, dplyr, haven, Hmisc, psych, janitor, corrplot, reshape, vcd, sfsmisc, DHARMa, e1071, MASS, fmsb)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#load datasets}
+\NormalTok{camdel <-}\StringTok{ }\KeywordTok{read_spss}\NormalTok{(}\StringTok{"Cambridge_delinquency_with_caseid.sav"}\NormalTok{)}
+\NormalTok{conviction <-}\StringTok{ }\KeywordTok{read_spss}\NormalTok{(}\StringTok{"conviction_data.sav"}\NormalTok{)}
+\KeywordTok{str}\NormalTok{(conviction)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Classes 'tbl_df', 'tbl' and 'data.frame':    2877 obs. of  3 variables:
+##  $ icpsr_seq_id_number: num  1 2 3 4 5 6 7 8 9 10 ...
+##   ..- attr(*, "format.spss")= chr "F8.2"
+##  $ agecat             : chr  "convicted_10_13" "convicted_10_13" "convicted_10_13" "convicted_10_13" ...
+##   ..- attr(*, "format.spss")= chr "A21"
+##  $ convicted          : num  1 1 1 1 1 1 1 1 2 1 ...
+##   ..- attr(*, "format.spss")= chr "F8.2"
+\end{verbatim}
+
+Question 1: Merge the two data files,select the variables and cases you
+need for the later analysis. Rename variables so that they are
+identifiable and usable
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#create and rename new data file with data in a wide format to make the merge file easier as there will common columns amongst the data set}
+\NormalTok{conviction_wide <-}\StringTok{ }\KeywordTok{spread}\NormalTok{(conviction, }\DataTypeTok{key=}\NormalTok{agecat, }\DataTypeTok{value=}\NormalTok{convicted)}\CommentTok{#moving from long to wide data format}
+\KeywordTok{colnames}\NormalTok{(conviction_wide)[}\DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{] <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"v4"}\NormalTok{, }\StringTok{"v5"}\NormalTok{, }\StringTok{"v11"}\NormalTok{, }\StringTok{"v6"}\NormalTok{, }\StringTok{"v7"}\NormalTok{, }\StringTok{"v8"}\NormalTok{, }\StringTok{"v10"}\NormalTok{, }\StringTok{"v9"}\NormalTok{)}\CommentTok{#renaming variables in conviction file to variable number according to code book}
+\CommentTok{#adding data labels to conviction data}
+\NormalTok{var.labels <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DataTypeTok{v4=}\StringTok{"ICPSR SEQ ID NUMBER"}\NormalTok{, }\DataTypeTok{v5=}\StringTok{"CONVICTED 10-13"}\NormalTok{, }\DataTypeTok{v11=}\StringTok{"CONVICTED 10-24"}\NormalTok{, }\DataTypeTok{v6=}\StringTok{"CONVICTED 14-16"}\NormalTok{, }\DataTypeTok{v7=}\StringTok{"CONVICTED 17-20"}\NormalTok{, }\DataTypeTok{v8=}\StringTok{"CONVICTED 21-24"}\NormalTok{, }
+\DataTypeTok{v10=}\StringTok{"CONVICTED AS ADULT 17-24"}\NormalTok{,}\DataTypeTok{v9=}\StringTok{"CONVICTED AS JUVENILE 10-16"}\NormalTok{)}
+\KeywordTok{attr}\NormalTok{(conviction_wide, }\StringTok{"variable.labels"}\NormalTok{) <-}\StringTok{ }\NormalTok{var.labels}
+
+\CommentTok{#joining data sets by v4 and assigning this to a new data frame}
+\NormalTok{full_camdel <-}\StringTok{ }\NormalTok{camdel }\OperatorTok{%>%}\StringTok{ }\KeywordTok{left_join}\NormalTok{(conviction_wide)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining, by = "v4"
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `v4` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+Selecting important variables to analyse: According to Kazemian(2011),
+measures in infancy is not associated with neglect and delinquency while
+Krohn (2006) looks at predictors of offending where infancy measures are
+not as important as antisocial child behavior, impulsivity, low
+intelligence or attainment, family criminality, poverty and poor
+parental child-rearing behavior. This analysis will aim to model Krohn's
+predictors on the data set.
+
+\section{variables of interest are:}\label{variables-of-interest-are}
+
+4 ICPSR SEQUENTIAL IDENTIFICATION NUMBER 9 CONVICTED AS JUVENILE 10-16
+10 CONVICTED AS ADULT 17-24 28 NUMBER OF JUVENILE CONVICTIONS 29 NUMBER
+OF ADULT CONVICTIONS 39 ADVENTUROUSNESS OF BOY 42 ACTING OUT 53 CONDUCT
+DISORDER OF BOY
+
+AGES 8 THROUGH 9 62 DISCIPLINE QUALITY OF FATHER 63 DISCIPLINE QUALITY
+OF MOTHER 108 OBEDIENCE OF BOY 117 OUTGOING OR WITHDRAWN BOY 119
+PROGRESSIVE MATRICES IQ 132 RULES OF PARENTS 138 SOCIOECONOMIC STATUS OF
+FAMILY
+
+AGES 24 THROUGH 25 847 CURRENT EMPLOYMENT STATUS 858 LIVING
+CIRCUMSTANCES
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#These variables will look at the relationship between factors at age 8-9 vs life at 24-25.}
+\NormalTok{camdel_selected <-}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(full_camdel, }\KeywordTok{c}\NormalTok{(}\StringTok{"v4"}\NormalTok{ ,}\StringTok{"v9"}\NormalTok{ ,}\StringTok{"v10"}\NormalTok{ ,}\StringTok{"v28"}\NormalTok{ ,}\StringTok{"v29"}\NormalTok{ ,}\StringTok{"v39"}\NormalTok{,}\StringTok{"v42"}\NormalTok{ ,}\StringTok{"v53"}\NormalTok{ ,}\StringTok{"v62"}\NormalTok{ ,}\StringTok{"v63"}\NormalTok{ ,}\StringTok{"v108"}\NormalTok{,}\StringTok{"v117"}\NormalTok{ ,}\StringTok{"v119"}\NormalTok{ ,}\StringTok{"v132"}\NormalTok{ ,}\StringTok{"v138"}\NormalTok{ ,}\StringTok{"v847"}\NormalTok{ ,}\StringTok{"v858"}\NormalTok{))}
+
+\NormalTok{var.labels <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DataTypeTok{v4=}\StringTok{"ICPSR SEQ ID NUMBER"}\NormalTok{, }\DataTypeTok{v9=}\StringTok{"CONVICTED AS JUVENILE 10-16"}\NormalTok{, }\DataTypeTok{v10=}\StringTok{"CONVICTED AS ADULT 17-24"}\NormalTok{)}
+\KeywordTok{attr}\NormalTok{(camdel_selected, }\StringTok{"variable.labels"}\NormalTok{) <-}\StringTok{ }\NormalTok{var.labels }\CommentTok{#adding variable labels to see what each variable actually is}
+
+\CommentTok{#renaming variables for easier understanding when doing analyses}
+\NormalTok{camdel_selected }\OperatorTok{%<>%}\StringTok{ }
+\KeywordTok{rename}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"v4"}\NormalTok{=}\StringTok{"SEQ_ID_NUMBER"}\NormalTok{, }\StringTok{"v9"}\NormalTok{=}\StringTok{"CONVICTED_AS_JUVENILE"}\NormalTok{, }\StringTok{"v10"}\NormalTok{=}\StringTok{"CONVICTED_AS_ADULT"}\NormalTok{, }\StringTok{"v28"}\NormalTok{=}\StringTok{"NO_JUVENILE_CONVICTIONS"}\NormalTok{, }\StringTok{"v29"}\NormalTok{=}\StringTok{"NO_ADULT_CONVICTIONS"}\NormalTok{, }\StringTok{"v39"}\NormalTok{=}\StringTok{"ADVENTUROUSNESS"}\NormalTok{, }\StringTok{"v42"}\NormalTok{=}\StringTok{"ACTING_OUT"}\NormalTok{, }\StringTok{"v53"}\NormalTok{=}\StringTok{"CONDUCT_DISORDER"}\NormalTok{, }\StringTok{"v62"}\NormalTok{=}\StringTok{"DISCIPLINE_FATHER"}\NormalTok{, }\StringTok{"v63"}\NormalTok{=}\StringTok{"DISCIPLINE_MOTHER"}\NormalTok{, }\StringTok{"v108"}\NormalTok{=}\StringTok{"OBEDIENCE"}\NormalTok{, }\StringTok{"v117"}\NormalTok{=}\StringTok{"OUTGOINGorWITHDRAWN"}\NormalTok{, }\StringTok{"v119"}\NormalTok{=}\StringTok{"IQ"}\NormalTok{, }\StringTok{"v132"}\NormalTok{=}\StringTok{"PARENT_RULES"}\NormalTok{, }\StringTok{"v138"}\NormalTok{=}\StringTok{"ses"}\NormalTok{, }\StringTok{"v847"}\NormalTok{=}\StringTok{"CURRENT_EMPLOYMENT"}\NormalTok{, }\StringTok{"v858"}\NormalTok{=}\StringTok{"CIRCUMSTANCES"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+Question 2: Explore the data set, bearing in mind that our key question
+concerns what the early life determinants of criminality are. What is
+worth exploring further?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{glimpse}\NormalTok{(camdel_selected)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Observations: 411
+## Variables: 17
+## $ SEQ_ID_NUMBER           <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,...
+## $ CONVICTED_AS_JUVENILE   <dbl> 1, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2,...
+## $ CONVICTED_AS_ADULT      <dbl> 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 2, 2,...
+## $ NO_JUVENILE_CONVICTIONS <dbl+lbl> 1, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1...
+## $ NO_ADULT_CONVICTIONS    <dbl+lbl> 1, 1, 1, 2, 3, 1, 1, 1, 2, 4, 1, 2...
+## $ ADVENTUROUSNESS         <dbl+lbl> 2, 1, 2, 3, 2, 1, 2, 2, 2, 2, 2, N...
+## $ ACTING_OUT              <dbl+lbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ CONDUCT_DISORDER        <dbl+lbl> 1, 1, 3, 1, 1, 1, 1, 1, 1, 2, 1, N...
+## $ DISCIPLINE_FATHER       <dbl+lbl> 1, NA, 1, 3, 1, 1, 1, 1, 1, NA, 1,...
+## $ DISCIPLINE_MOTHER       <dbl+lbl> 2, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, N...
+## $ OBEDIENCE               <dbl+lbl> 2, 2, 2, 1, 2, 3, 2, 2, 3, 3, 1, N...
+## $ OUTGOINGorWITHDRAWN     <dbl+lbl> 1, 2, 1, 1, 2, 2, 2, 2, 2, 1, 1, N...
+## $ IQ                      <dbl+lbl> 2, 3, 3, 4, 4, 4, 4, 2, 4, 1, 1, 2...
+## $ PARENT_RULES            <dbl+lbl> 2, 1, 1, 3, 2, 2, 2, 2, 2, 2, 2, N...
+## $ ses                     <dbl+lbl> 3, 5, 3, 3, 3, 3, 3, 3, 6, 4, 3, 5...
+## $ CURRENT_EMPLOYMENT      <dbl+lbl> NA, NA, NA, 1, NA, NA, NA, NA, NA,...
+## $ CIRCUMSTANCES           <dbl+lbl> NA, NA, NA, 4, NA, NA, NA, NA, NA,...
+\end{verbatim}
+
+From a quick look at the data file, it seems like there are a few
+missing values that might be problematic later on. Narrowing the
+variables down has also made dealing with the variables more easily.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#pairs.panels to look at basic correlations between childhood (8-9 years) and background variables.}
+\NormalTok{camdel_selected }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{13}\NormalTok{, }\DecValTok{14}\NormalTok{, }\DecValTok{15}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pairs.panels}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{camdel_selected }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{9}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{, }\DecValTok{12}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{17}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pairs.panels}\NormalTok{()}\CommentTok{#breaking up variables as graph becomes unreadable with too many variables inputted}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-6-2.pdf} From
+the graphs above it seems like there is a moderate positive relationship
+between being convicted as a juvenile and then later on as an adult. It
+seems like the chosen background variables have a weak correlation with
+adult convictions. However, this be will be further explored in question
+3.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#looking at distribution of individual characteristics at ages 8-9}
+\KeywordTok{cor}\NormalTok{(camdel_selected, }\DataTypeTok{use=}\StringTok{"complete.obs"}\NormalTok{, }\DataTypeTok{method=}\StringTok{"kendall"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                         SEQ_ID_NUMBER CONVICTED_AS_JUVENILE
+## SEQ_ID_NUMBER             1.000000000           -0.06151109
+## CONVICTED_AS_JUVENILE    -0.061511095            1.00000000
+## CONVICTED_AS_ADULT       -0.133519447            0.55761053
+## NO_JUVENILE_CONVICTIONS  -0.041720188            0.91825250
+## NO_ADULT_CONVICTIONS     -0.134829843            0.44819339
+## ADVENTUROUSNESS          -0.183837146            0.32873559
+## ACTING_OUT               -0.020766851            0.34937494
+## CONDUCT_DISORDER         -0.059741501            0.34157674
+## DISCIPLINE_FATHER        -0.079015841            0.30017299
+## DISCIPLINE_MOTHER         0.183735542            0.41089889
+## OBEDIENCE                -0.079382230           -0.06762522
+## OUTGOINGorWITHDRAWN       0.163692290           -0.19568230
+## IQ                       -0.012871880            0.19772179
+## PARENT_RULES             -0.240282652            0.02439328
+## ses                       0.012530457           -0.18549251
+## CURRENT_EMPLOYMENT       -0.009409755            0.04477363
+## CIRCUMSTANCES            -0.146437918            0.20230876
+##                         CONVICTED_AS_ADULT NO_JUVENILE_CONVICTIONS
+## SEQ_ID_NUMBER                 -0.133519447             -0.04172019
+## CONVICTED_AS_JUVENILE          0.557610532              0.91825250
+## CONVICTED_AS_ADULT             1.000000000              0.48383394
+## NO_JUVENILE_CONVICTIONS        0.483833936              1.00000000
+## NO_ADULT_CONVICTIONS           0.899652711              0.43037331
+## ADVENTUROUSNESS                0.390729605              0.30007081
+## ACTING_OUT                     0.260625009              0.34754894
+## CONDUCT_DISORDER               0.372841271              0.35846136
+## DISCIPLINE_FATHER              0.162523728              0.29520125
+## DISCIPLINE_MOTHER              0.190286653              0.36749712
+## OBEDIENCE                      0.008787496             -0.09355953
+## OUTGOINGorWITHDRAWN           -0.352208722             -0.18697032
+## IQ                             0.190316821              0.21592763
+## PARENT_RULES                   0.137545013              0.01359951
+## ses                           -0.002421125             -0.15207943
+## CURRENT_EMPLOYMENT             0.147875855              0.09707353
+## CIRCUMSTANCES                  0.142710738              0.17250120
+##                         NO_ADULT_CONVICTIONS ADVENTUROUSNESS  ACTING_OUT
+## SEQ_ID_NUMBER                    -0.13482984     -0.18383715 -0.02076685
+## CONVICTED_AS_JUVENILE             0.44819339      0.32873559  0.34937494
+## CONVICTED_AS_ADULT                0.89965271      0.39072960  0.26062501
+## NO_JUVENILE_CONVICTIONS           0.43037331      0.30007081  0.34754894
+## NO_ADULT_CONVICTIONS              1.00000000      0.35750792  0.21556296
+## ADVENTUROUSNESS                   0.35750792      1.00000000  0.39435162
+## ACTING_OUT                        0.21556296      0.39435162  1.00000000
+## CONDUCT_DISORDER                  0.33371629      0.50023425  0.72279892
+## DISCIPLINE_FATHER                 0.10722427      0.25700192  0.08257484
+## DISCIPLINE_MOTHER                 0.14308577      0.24242638  0.28653734
+## OBEDIENCE                         0.01264911     -0.24925958 -0.30136987
+## OUTGOINGorWITHDRAWN              -0.29909015     -0.26905287 -0.18237908
+## IQ                                0.12484722      0.22493274  0.10014934
+## PARENT_RULES                      0.10541049      0.16808159  0.12941423
+## ses                               0.04864584      0.02066634  0.05359818
+## CURRENT_EMPLOYMENT                0.21482190      0.07162802  0.30352148
+## CIRCUMSTANCES                     0.12923477      0.26354342 -0.04702135
+##                         CONDUCT_DISORDER DISCIPLINE_FATHER
+## SEQ_ID_NUMBER                 -0.0597415      -0.079015841
+## CONVICTED_AS_JUVENILE          0.3415767       0.300172989
+## CONVICTED_AS_ADULT             0.3728413       0.162523728
+## NO_JUVENILE_CONVICTIONS        0.3584614       0.295201252
+## NO_ADULT_CONVICTIONS           0.3337163       0.107224269
+## ADVENTUROUSNESS                0.5002342       0.257001918
+## ACTING_OUT                     0.7227989       0.082574836
+## CONDUCT_DISORDER               1.0000000       0.239328390
+## DISCIPLINE_FATHER              0.2393284       1.000000000
+## DISCIPLINE_MOTHER              0.2220173       0.117779020
+## OBEDIENCE                     -0.3671374      -0.131519190
+## OUTGOINGorWITHDRAWN           -0.2539424       0.126159491
+## IQ                             0.2000339       0.224756669
+## PARENT_RULES                   0.1823828      -0.030179876
+## ses                            0.1089467       0.036236086
+## CURRENT_EMPLOYMENT             0.2794801       0.004535252
+## CIRCUMSTANCES                  0.1480235       0.076407562
+##                         DISCIPLINE_MOTHER    OBEDIENCE OUTGOINGorWITHDRAWN
+## SEQ_ID_NUMBER                 0.183735542 -0.079382230          0.16369229
+## CONVICTED_AS_JUVENILE         0.410898889 -0.067625223         -0.19568230
+## CONVICTED_AS_ADULT            0.190286653  0.008787496         -0.35220872
+## NO_JUVENILE_CONVICTIONS       0.367497117 -0.093559525         -0.18697032
+## NO_ADULT_CONVICTIONS          0.143085770  0.012649111         -0.29909015
+## ADVENTUROUSNESS               0.242426376 -0.249259578         -0.26905287
+## ACTING_OUT                    0.286537342 -0.301369870         -0.18237908
+## CONDUCT_DISORDER              0.222017340 -0.367137410         -0.25394237
+## DISCIPLINE_FATHER             0.117779020 -0.131519190          0.12615949
+## DISCIPLINE_MOTHER             1.000000000 -0.173234026         -0.03201635
+## OBEDIENCE                    -0.173234026  1.000000000          0.19473341
+## OUTGOINGorWITHDRAWN          -0.032016354  0.194733410          1.00000000
+## IQ                           -0.075441392 -0.257004544         -0.07057355
+## PARENT_RULES                 -0.120745196 -0.051015088         -0.19192854
+## ses                          -0.277035925 -0.061716342          0.08547104
+## CURRENT_EMPLOYMENT            0.057062488 -0.025379914          0.07227502
+## CIRCUMSTANCES                 0.003683368  0.006837981         -0.09107844
+##                                  IQ PARENT_RULES          ses
+## SEQ_ID_NUMBER           -0.01287188  -0.24028265  0.012530457
+## CONVICTED_AS_JUVENILE    0.19772179   0.02439328 -0.185492505
+## CONVICTED_AS_ADULT       0.19031682   0.13754501 -0.002421125
+## NO_JUVENILE_CONVICTIONS  0.21592763   0.01359951 -0.152079426
+## NO_ADULT_CONVICTIONS     0.12484722   0.10541049  0.048645841
+## ADVENTUROUSNESS          0.22493274   0.16808159  0.020666342
+## ACTING_OUT               0.10014934   0.12941423  0.053598177
+## CONDUCT_DISORDER         0.20003388   0.18238285  0.108946744
+## DISCIPLINE_FATHER        0.22475667  -0.03017988  0.036236086
+## DISCIPLINE_MOTHER       -0.07544139  -0.12074520 -0.277035925
+## OBEDIENCE               -0.25700454  -0.05101509 -0.061716342
+## OUTGOINGorWITHDRAWN     -0.07057355  -0.19192854  0.085471040
+## IQ                       1.00000000   0.12973838  0.228076296
+## PARENT_RULES             0.12973838   1.00000000  0.048981795
+## ses                      0.22807630   0.04898180  1.000000000
+## CURRENT_EMPLOYMENT       0.15733314   0.22816068  0.107423446
+## CIRCUMSTANCES            0.14346689   0.12057451 -0.013344975
+##                         CURRENT_EMPLOYMENT CIRCUMSTANCES
+## SEQ_ID_NUMBER                 -0.009409755  -0.146437918
+## CONVICTED_AS_JUVENILE          0.044773626   0.202308759
+## CONVICTED_AS_ADULT             0.147875855   0.142710738
+## NO_JUVENILE_CONVICTIONS        0.097073528   0.172501201
+## NO_ADULT_CONVICTIONS           0.214821902   0.129234774
+## ADVENTUROUSNESS                0.071628019   0.263543418
+## ACTING_OUT                     0.303521483  -0.047021346
+## CONDUCT_DISORDER               0.279480147   0.148023515
+## DISCIPLINE_FATHER              0.004535252   0.076407562
+## DISCIPLINE_MOTHER              0.057062488   0.003683368
+## OBEDIENCE                     -0.025379914   0.006837981
+## OUTGOINGorWITHDRAWN            0.072275024  -0.091078436
+## IQ                             0.157333141   0.143466894
+## PARENT_RULES                   0.228160679   0.120574511
+## ses                            0.107423446  -0.013344975
+## CURRENT_EMPLOYMENT             1.000000000  -0.123793988
+## CIRCUMSTANCES                 -0.123793988   1.000000000
+\end{verbatim}
+
+From the correlations above, it can be seen that there is a moderate
+positive relationship between being convicted as a juvenile and then
+later on being convicted as an adult. Conduct disorder also seems to be
+correlated with boys acting out and their adventurousness. Therefore,
+for simplicity in question 3, conduct disorder will be used as a proxy
+for adventurousness and acting out.
+
+Question 3: Model the occurrence and extent of criminality in our
+participants on the basis of early life events or factors. Interpret
+your model(s). Write a function to assess the predictive accuracy of
+your model(s), test it, and apply it to your data.
+
+Build two models for comparison (basic lm and then an improved model
+only using significant predictors) LDA will be used in this instance as
+it can be used on more than two classes in a categorical DV
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#LDA model predicting whether boys were convicted as an adult based on a combination of their individual behaviours and family influences}
+\NormalTok{camdel_model1 <-}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(camdel_selected, }\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{17}\NormalTok{ ))}\CommentTok{#removing adult variables that are not of interest}
+
+\CommentTok{#splitting data into test and training set}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\NormalTok{camdel_traindata <-}\StringTok{ }\KeywordTok{sample_frac}\NormalTok{(camdel_model1, }\FloatTok{0.75}\NormalTok{)}
+\NormalTok{camdel_testdata  <-}\StringTok{ }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{setdiff}\NormalTok{(camdel_model1, camdel_traindata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `SEQ_ID_NUMBER` has different attributes on LHS and RHS of
+## join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `NO_JUVENILE_CONVICTIONS` has different attributes on LHS
+## and RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `NO_ADULT_CONVICTIONS` has different attributes on LHS and
+## RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `ADVENTUROUSNESS` has different attributes on LHS and RHS
+## of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `ACTING_OUT` has different attributes on LHS and RHS of
+## join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `CONDUCT_DISORDER` has different attributes on LHS and RHS
+## of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `DISCIPLINE_FATHER` has different attributes on LHS and RHS
+## of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `DISCIPLINE_MOTHER` has different attributes on LHS and RHS
+## of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `OBEDIENCE` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `OUTGOINGorWITHDRAWN` has different attributes on LHS and
+## RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `IQ` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `PARENT_RULES` has different attributes on LHS and RHS of
+## join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `ses` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Build the model on the training data set}
+\NormalTok{modeltrain <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(CONVICTED_AS_ADULT }\OperatorTok{~}\StringTok{ }\NormalTok{CONVICTED_AS_JUVENILE }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{NO_JUVENILE_CONVICTIONS }\OperatorTok{+}\StringTok{ }\NormalTok{NO_ADULT_CONVICTIONS }\OperatorTok{+}
+\StringTok{                       }\NormalTok{CONDUCT_DISORDER }\OperatorTok{+}\StringTok{ }\NormalTok{DISCIPLINE_FATHER }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{DISCIPLINE_MOTHER }\OperatorTok{+}\StringTok{  }\NormalTok{OBEDIENCE }\OperatorTok{+}\StringTok{ }\NormalTok{OUTGOINGorWITHDRAWN }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{IQ }\OperatorTok{+}\StringTok{ }\NormalTok{ses, }\DataTypeTok{data =}\NormalTok{ camdel_traindata)}
+\KeywordTok{summary}\NormalTok{(modeltrain)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = CONVICTED_AS_ADULT ~ CONVICTED_AS_JUVENILE + NO_JUVENILE_CONVICTIONS + 
+##     NO_ADULT_CONVICTIONS + CONDUCT_DISORDER + DISCIPLINE_FATHER + 
+##     DISCIPLINE_MOTHER + OBEDIENCE + OUTGOINGorWITHDRAWN + IQ + 
+##     ses, data = camdel_traindata)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.48487  -0.09308  -0.04582   0.01645   0.58697  
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)              0.6891518  0.0891323   7.732 3.38e-13 ***
+## CONVICTED_AS_JUVENILE    0.1949813  0.0717888   2.716  0.00711 ** 
+## NO_JUVENILE_CONVICTIONS -0.1686904  0.0409802  -4.116 5.38e-05 ***
+## NO_ADULT_CONVICTIONS     0.4512734  0.0175779  25.673  < 2e-16 ***
+## CONDUCT_DISORDER        -0.0160986  0.0195646  -0.823  0.41146    
+## DISCIPLINE_FATHER        0.0009877  0.0136272   0.072  0.94228    
+## DISCIPLINE_MOTHER        0.0020603  0.0183711   0.112  0.91080    
+## OBEDIENCE               -0.0179908  0.0213109  -0.844  0.39944    
+## OUTGOINGorWITHDRAWN     -0.0322793  0.0197512  -1.634  0.10358    
+## IQ                       0.0354332  0.0122076   2.903  0.00406 ** 
+## ses                     -0.0212977  0.0089967  -2.367  0.01876 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.03922258)
+## 
+##     Null deviance: 46.3933  on 238  degrees of freedom
+## Residual deviance:  8.9427  on 228  degrees of freedom
+##   (69 observations deleted due to missingness)
+## AIC: -83.011
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{modeltrain2 <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(NO_ADULT_CONVICTIONS }\OperatorTok{~}\StringTok{ }\NormalTok{CONVICTED_AS_ADULT }\OperatorTok{+}\StringTok{   }
+\StringTok{                    }\NormalTok{CONVICTED_AS_JUVENILE }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{NO_JUVENILE_CONVICTIONS }\OperatorTok{+}\StringTok{ }\NormalTok{NO_ADULT_CONVICTIONS }\OperatorTok{+}
+\StringTok{                       }\NormalTok{CONDUCT_DISORDER }\OperatorTok{+}\StringTok{ }\NormalTok{DISCIPLINE_FATHER }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{DISCIPLINE_MOTHER }\OperatorTok{+}\StringTok{  }\NormalTok{OBEDIENCE }\OperatorTok{+}\StringTok{ }\NormalTok{OUTGOINGorWITHDRAWN }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{IQ }\OperatorTok{+}\StringTok{ }\NormalTok{ses, }\DataTypeTok{data =}\NormalTok{ camdel_traindata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in model.matrix.default(mt, mf, contrasts): the response appeared
+## on the right-hand side and was dropped
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in model.matrix.default(mt, mf, contrasts): problem with term 4 in
+## model.matrix: no columns are assigned
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(modeltrain2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = NO_ADULT_CONVICTIONS ~ CONVICTED_AS_ADULT + CONVICTED_AS_JUVENILE + 
+##     NO_JUVENILE_CONVICTIONS + NO_ADULT_CONVICTIONS + CONDUCT_DISORDER + 
+##     DISCIPLINE_FATHER + DISCIPLINE_MOTHER + OBEDIENCE + OUTGOINGorWITHDRAWN + 
+##     IQ + ses, data = camdel_traindata)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -1.17410  -0.08754   0.01559   0.08894   1.48408  
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)             -1.0969702  0.1769363  -6.200 2.62e-09 ***
+## CONVICTED_AS_ADULT       1.6464073  0.0641305  25.673  < 2e-16 ***
+## CONVICTED_AS_JUVENILE   -0.3031343  0.1378680  -2.199   0.0289 *  
+## NO_JUVENILE_CONVICTIONS  0.4508491  0.0754374   5.976 8.71e-09 ***
+## CONDUCT_DISORDER         0.0416650  0.0373234   1.116   0.2655    
+## DISCIPLINE_FATHER       -0.0006613  0.0260291  -0.025   0.9798    
+## DISCIPLINE_MOTHER        0.0036656  0.0350901   0.104   0.9169    
+## OBEDIENCE                0.0329362  0.0407103   0.809   0.4193    
+## OUTGOINGorWITHDRAWN      0.0415484  0.0378467   1.098   0.2734    
+## IQ                      -0.0376663  0.0236129  -1.595   0.1121    
+## ses                      0.0444224  0.0171437   2.591   0.0102 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.143098)
+## 
+##     Null deviance: 201.699  on 238  degrees of freedom
+## Residual deviance:  32.626  on 228  degrees of freedom
+##   (69 observations deleted due to missingness)
+## AIC: 226.32
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+The first model has a much lower AIC which means that adult convictions
+is better predicted by individual and family characteristics than number
+of convictions as an adult. This is similar to Krohn's(2006) findings
+which state that the most important independent childhood predictors of
+offending could be grouped under the headings of antisocial child
+behavior, impulsivity, low intelligence or attainment, family
+criminality, poverty and poor parental child-rearing behavior. However,
+this model indicates that IQ, SES, conviction as a juvenile and number
+of convictions as a juvenile are significant predictors of adult
+conviction.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#test for significance of model 1}
+\DecValTok{1}\OperatorTok{-}\KeywordTok{pchisq}\NormalTok{(modeltrain}\OperatorTok{$}\NormalTok{deviance,}
+\NormalTok{         modeltrain}\OperatorTok{$}\NormalTok{df.residual)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1
+\end{verbatim}
+
+The training regression model is not significant which means that the
+model seems to fit the data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#comparing the training to the test model using anova}
+\NormalTok{testmodel <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(CONVICTED_AS_ADULT }\OperatorTok{~}\StringTok{ }\NormalTok{CONVICTED_AS_JUVENILE }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{NO_JUVENILE_CONVICTIONS }\OperatorTok{+}\StringTok{ }\NormalTok{NO_ADULT_CONVICTIONS }\OperatorTok{+}
+\StringTok{                       }\NormalTok{CONDUCT_DISORDER }\OperatorTok{+}\StringTok{ }\NormalTok{DISCIPLINE_FATHER }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{DISCIPLINE_MOTHER }\OperatorTok{+}\StringTok{  }\NormalTok{OBEDIENCE }\OperatorTok{+}\StringTok{ }\NormalTok{OUTGOINGorWITHDRAWN }\OperatorTok{+}\StringTok{ }
+\StringTok{                       }\NormalTok{IQ }\OperatorTok{+}\StringTok{ }\NormalTok{ses, }\DataTypeTok{data =}\NormalTok{ camdel_testdata)}
+\KeywordTok{summary}\NormalTok{(testmodel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = CONVICTED_AS_ADULT ~ CONVICTED_AS_JUVENILE + NO_JUVENILE_CONVICTIONS + 
+##     NO_ADULT_CONVICTIONS + CONDUCT_DISORDER + DISCIPLINE_FATHER + 
+##     DISCIPLINE_MOTHER + OBEDIENCE + OUTGOINGorWITHDRAWN + IQ + 
+##     ses, data = camdel_testdata)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.55107  -0.11092  -0.04825   0.03988   0.52056  
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)              0.2170941  0.1879115   1.155 0.251841    
+## CONVICTED_AS_JUVENILE    0.3561060  0.1203628   2.959 0.004196 ** 
+## NO_JUVENILE_CONVICTIONS -0.2549882  0.0738684  -3.452 0.000942 ***
+## NO_ADULT_CONVICTIONS     0.4707995  0.0330491  14.245  < 2e-16 ***
+## CONDUCT_DISORDER         0.0817061  0.0398493   2.050 0.044021 *  
+## DISCIPLINE_FATHER       -0.0158942  0.0278273  -0.571 0.569687    
+## DISCIPLINE_MOTHER        0.0199054  0.0319839   0.622 0.535702    
+## OBEDIENCE                0.1109127  0.0424796   2.611 0.011008 *  
+## OUTGOINGorWITHDRAWN      0.0373446  0.0405893   0.920 0.360657    
+## IQ                       0.0005499  0.0223317   0.025 0.980423    
+## ses                     -0.0328496  0.0180473  -1.820 0.072944 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.04401854)
+## 
+##     Null deviance: 17.3780  on 81  degrees of freedom
+## Residual deviance:  3.1253  on 71  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: -11.203
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+It seems that the AIC score for the test model is actually better than
+that of the training model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Diagnostics for logistic model}
+\KeywordTok{plot}\NormalTok{(modeltrain)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-12-2.pdf}
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-12-3.pdf}
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-12-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(modeltrain))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_1_files/figure-latex/unnamed-chunk-13-1.pdf}
+Residuals seem to be relatively small. However, there do seem to be some
+high leverage values that are pulling the model up.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{NagelkerkeR2}\NormalTok{(modeltrain)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $N
+## [1] 239
+## 
+## $R2
+## [1] 0.8220356
+\end{verbatim}
+
+The r squared value for model 1 indicates that 82\% of the response
+variable variation is explained by a linear model which is good
+considering the fact that a few variables did not show any correlations
+to adult conviction.
+
+
+\end{document}
